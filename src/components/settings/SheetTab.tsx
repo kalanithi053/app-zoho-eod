@@ -34,7 +34,7 @@ export function SheetTab() {
     const payload = buildSheetPayload(form, user ?? {});
     const res = await templateService.updateCurrentUser(payload);
     if (res?.success) {
-      console.log("suceess");
+      // TODO
       setUser(res?.data);
     }
     setLoading(false);

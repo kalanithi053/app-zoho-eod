@@ -23,23 +23,21 @@ export function ProfileTab() {
       [key]: value,
     }));
   };
+
   useEffect(() => {
     setForm({
-      name: user?.name ?? "",
-      eodMailRecipient: user?.configuration?.eodMailRecipient ?? "",
-      jobFailureTriggerRecipient:
-        user?.configuration?.jobFailureTriggerRecipient ?? "",
-      cronOption: user?.configuration?.cronOption ?? "",
+      ...user,
+      ...user?.configuration,
     });
   }, [user]);
-  console.log(form);
+
   const triggerOnSave = async () => {
     setLoading(true);
     const payload = buildPayload(form, user ?? {});
     const res = await templateService.updateCurrentUser(payload);
     if (res?.success) {
-      console.log("suceess");
       setUser(res?.data);
+      // TODO
     }
     setLoading(false);
   };
