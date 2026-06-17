@@ -36,3 +36,21 @@ body {
 *:focus-visible {
   @apply outline-none ring-2 ring-brand-400 ring-offset-1 ring-offset-zinc-950;
 }
+
+@keyframes scan {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(240px);
+  }
+}
+
+@keyframes loading {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}

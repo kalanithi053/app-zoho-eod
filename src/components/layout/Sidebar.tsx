@@ -1,6 +1,7 @@
 "use client";
-
+import { useUserStore } from "@/store/useAuthStore";
 import clsx from "clsx";
+import Cookies from "js-cookie";
 import {
   Bell,
   ChevronRight,
@@ -11,7 +12,7 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -29,17 +30,7 @@ const SETTINGS_SUB = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { data: session } = useSession();
-
-  const initials = session?.user?.name
-    ? session.user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase()
-    : "??";
-
+  const {user}=useUserStore()
   return (
     <aside className="w-[220px] flex-shrink-0 bg-zinc-900 border-r border-zinc-800 flex flex-col h-full">
       {/* Brand */}
@@ -116,19 +107,32 @@ export function Sidebar() {
       {/* User footer */}
       <div className="border-t border-zinc-800 px-3 py-3">
         <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-zinc-800 transition-colors group">
-          <div className="w-7 h-7 rounded-full bg-brand-800 flex items-center justify-center text-[10px] font-semibold text-brand-100 flex-shrink-0">
-            {initials}
-          </div>
+          {user?.userProfileUrl ? (
+            <Image
+              src={user.userProfileUrl}
+              alt={user.name}
+              width={28}
+              height={28}
+              className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className="w-7 h-7 rounded-full bg-brand-800 flex items-center justify-center text-[10px] font-semibold text-brand-100 flex-shrink-0">
+              {user?.name?.[0]}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-zinc-200 truncate">
-              {session?.user?.name ?? "User"}
+              {user?.name ?? "User"}
             </p>
             <p className="text-[10px] text-zinc-500 truncate">
-              {session?.user?.email ?? ""}
+              {user?.email ?? ""}
             </p>
           </div>
           <button
-            onClick={() => signOut({ callbackUrl: "/signin" })}
+            onClick={() => {
+              Cookies.remove("access_token");
+              window.location.reload();
+            }}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-red-400 text-zinc-500"
             title="Sign out"
           >

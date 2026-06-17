@@ -21,6 +21,20 @@ module.exports = {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
       },
+      keyframes: {
+        scan: {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(240px)" },
+        },
+        loading: {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(300%)" },
+        },
+      },
+      animation: {
+        scan: "scan 2s linear infinite",
+        loading: "loading 2s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

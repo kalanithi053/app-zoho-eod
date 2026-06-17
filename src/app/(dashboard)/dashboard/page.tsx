@@ -1,15 +1,14 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+"use client";
 import { ActivityLog } from "@/components/ui/ActivityLog";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { UpcomingJobs } from "@/components/ui/UpcommingJobs";
 import { WeeklyChart } from "@/components/ui/WeeklyTask";
+import { useUserStore } from "@/store/useAuthStore";
 import { Mail, RefreshCw, Timer, TrendingUp } from "lucide-react";
-import { getServerSession } from "next-auth";
 
-export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-
-  const firstName = session?.user?.name?.split(" ")[0] ?? "there";
+export default function DashboardPage() {
+  const { user } = useUserStore();
+  const firstName = user?.name?.split(" ")[0] ?? "there";
   const now = new Date();
   const timeStr = now.toLocaleTimeString("en-IN", {
     hour: "2-digit",

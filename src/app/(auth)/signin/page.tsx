@@ -1,23 +1,16 @@
 "use client";
 
+import templateService from "@/service/template.service";
 import { CheckCircle, Clock } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function SignInPage() {
-  const { status } = useSession();
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // Already signed in → go to dashboard
-  useEffect(() => {
-    if (status === "authenticated") router.push("/dashboard");
-  }, [status, router]);
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-    await signIn("google", { callbackUrl: "/dashboard" });
+    window.location.href = templateService.triggerGoogle();
   };
 
   return (
@@ -70,7 +63,7 @@ export default function SignInPage() {
           {/* Google Sign In */}
           <button
             onClick={handleGoogleSignIn}
-            disabled={loading || status === "loading"}
+            disabled={loading }
             className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-600 rounded-xl text-sm font-medium text-zinc-100 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useUserStore } from "@/store/useAuthStore";
 import {
   FieldRow,
   SaveButton,
@@ -11,21 +11,15 @@ import {
 } from "../ui/SettingsCard";
 
 export function ProfileTab() {
-  const { data: session } = useSession();
-
+  const { user } = useUserStore();
   return (
     <div>
       <SettingsCard title="Your profile">
         <FieldRow label="Display name">
-          <TextInput
-            defaultValue={session?.user?.name ?? ""}
-            placeholder="Your name"
-          />
+          <TextInput defaultValue={user?.name ?? ""} placeholder="Your name" />
         </FieldRow>
         <FieldRow label="Email" hint="Linked to your Google account">
-          <span className="text-sm text-zinc-500">
-            {session?.user?.email ?? "—"}
-          </span>
+          <span className="text-sm text-zinc-500">{user?.email ?? "—"}</span>
         </FieldRow>
         <FieldRow
           label="EOD mail recipient"

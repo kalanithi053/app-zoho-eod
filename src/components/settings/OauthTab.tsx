@@ -1,6 +1,6 @@
 "use client";
-
-import { useSession } from "next-auth/react";
+import templateService from "@/service/template.service";
+import { useUserStore } from "@/store/useAuthStore";
 import {
   ActionButton,
   FieldRow,
@@ -11,27 +11,42 @@ import {
 } from "../ui/SettingsCard";
 
 export function OAuthTab() {
-  const { data: session } = useSession();
-
+  const { user, setUser } = useUserStore();
+  const triggerZohoOAuth = async () => {
+    const res = await templateService.triggerZohoOAuth();
+    window.location.href = res?.data;
+  };
+  const revokeZohoOAuth = async () => {
+    const res = await templateService.revokeZohoOAuth();
+    setUser(res.data);
+    console.log(res);
+  };
   return (
     <div>
       <SettingsCard title="Google OAuth">
-        <FieldRow
-          label="Google account"
-          hint={session?.user?.email ?? "Not signed in"}
-        >
-          <StatusPill connected={!!session} />
-          <ActionButton variant="danger">Revoke</ActionButton>
+        <FieldRow label="Google account" hint={user?.email ?? "Not signed in"}>
+          <StatusPill connected={!!user?.configuration?.validatedGoogle} />
         </FieldRow>
         <FieldRow label="Gmail API" hint="Send EOD mails on your behalf">
-          <StatusPill connected={!!session} />
+          <StatusPill connected={!!user?.configuration?.validatedGoogle} />
         </FieldRow>
         <FieldRow label="Google Sheets API" hint="Read task rows and hours">
-          <StatusPill connected={!!session} />
+          <StatusPill connected={!!user?.configuration?.validatedGoogle} />
         </FieldRow>
         <FieldRow label="Zoho OAuth" hint="Tasks · logs · status sync">
-          <StatusPill connected={false} />
-          <ActionButton variant="primary">Connect</ActionButton>
+          <StatusPill connected={!!user?.configuration?.validatedZoho} />
+          {!user?.configuration?.validatedZoho ? (
+            <ActionButton
+              variant="primary"
+              onClick={async () => triggerZohoOAuth()}
+            >
+              Connect
+            </ActionButton>
+          ) : (
+            <ActionButton variant="danger" onClick={() => revokeZohoOAuth()}>
+              Revoke
+            </ActionButton>
+          )}
         </FieldRow>
       </SettingsCard>
 
