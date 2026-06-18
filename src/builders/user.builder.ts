@@ -25,6 +25,8 @@ export const buildPayload = (
   if (Object.keys(configuration).length) {
     payload.configuration = configuration;
   }
+  payload.configuration.triggerCron = form.triggerCron;
+
   return payload;
 };
 

@@ -11,6 +11,7 @@ import {
   Select,
   SettingsCard,
   TextInput,
+  Toggle,
 } from "../ui/SettingsCard";
 
 export function ProfileTab() {
@@ -117,6 +118,12 @@ export function ProfileTab() {
             options={cronOptions}
             value={form.cronOption}
             onChange={(value) => handleChange("cronOption", value)}
+          />
+        </FieldRow>
+        <FieldRow label="Trigger Cron" hint="">
+          <Toggle
+            defaultChecked={form.triggerCron}
+            onChange={(value) => handleChange("triggerCron", value)}
           />
         </FieldRow>
       </SettingsCard>
