@@ -38,9 +38,20 @@ class TemplateService extends ApiService {
     const url = this.buildUrl("users/revoke/zoho");
     return this.request(MapRequest.get, url);
   }
+
   updateCurrentUser(payload: Record<string, any>) {
     const url = this.buildUrl("users");
     return this.request(MapRequest.patch, url, payload);
+  }
+
+  updateZohoProjects(payload: Record<string, any>) {
+    const url = this.buildUrl("users/zoho-projects");
+    return this.request(MapRequest.patch, url, payload);
+  }
+
+  getProjects() {
+    const url = this.buildUrl("zoho/projects");
+    return this.request(MapRequest.get, url);
   }
 }
 

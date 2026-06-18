@@ -25,12 +25,13 @@ export interface Configuration {
   validatedZoho: boolean;
   zohoRefreshToken: string | null;
   cronOption: string | null;
-  protalId: string | null;
   zohoUserId: string | null;
-  projects: any[];
+  projects: { id: string | number; name: string }[];
   sheet: SheetConfiguration;
   eodMailRecipient: string | null;
   jobFailureTriggerRecipient: string | null;
+  portal: { id: string | number; name: string };
+  defaultProject: { id: string | number; name: string };
 }
 
 interface UserState {

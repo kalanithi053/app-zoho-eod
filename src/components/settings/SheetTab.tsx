@@ -30,14 +30,44 @@ export function SheetTab() {
     }));
   };
 
-  const handleSave = async () => {
-    const payload = buildSheetPayload(form, user ?? {});
-    const res = await templateService.updateCurrentUser(payload);
-    if (res?.success) {
-      // TODO
-      setUser(res?.data);
+  const validateSheet = () => {
+    const regex = /^[A-Za-z0-9_ ]+![A-Z]+:[A-Z]+$/;
+    const indexes = [
+      form.taskNameIndex,
+      form.durationIndex,
+      form.statusIndex,
+      form.dateIndex,
+      form.projectIndex,
+    ]
+      .filter((v) => v !== "" && v !== null && v !== undefined)
+      .map(Number);
+
+    const hasDuplicates = new Set(indexes).size !== indexes.length;
+    if (!regex.test(form.sheetTabName)) {
+      throw new Error(
+        "Invalid sheet tab name format. Use SheetName!ColumnStart:ColumnEnd",
+      );
     }
-    setLoading(false);
+    if (hasDuplicates) {
+      throw new Error("Each column index must be unique."); // TODO
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      validateSheet();
+      const payload = buildSheetPayload(form, user ?? {});
+      setLoading(true);
+      const res = await templateService.updateCurrentUser(payload);
+      if (res?.success) {
+        // TODO
+        setUser(res?.data);
+      }
+    } catch (e: any) {
+      console.log(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,7 +91,7 @@ export function SheetTab() {
           <TextInput
             defaultValue={form.sheetTabName}
             onChange={(value) => handleChange("sheetTabName", value)}
-            placeholder="EOD Tasks"
+            placeholder="SheetName!ColumnStart:ColumnEnd"
           />
         </FieldRow>
 
@@ -104,6 +134,18 @@ export function SheetTab() {
           />
         </FieldRow>
         <FieldRow
+          label="Project column index"
+          hint="Zero-based index of the project column"
+        >
+          <TextInput
+            type="number"
+            defaultValue={form.projectIndex}
+            onChange={(value) => handleChange("projectIndex", value)}
+            placeholder="2"
+            className="w-20"
+          />
+        </FieldRow>
+        <FieldRow
           label="Status column index"
           hint="Zero-based index of the status column"
         >
@@ -117,7 +159,7 @@ export function SheetTab() {
         </FieldRow>
       </SettingsCard>
 
-      <SaveButton onClick={handleSave} />
+      <SaveButton loading={loading} onClick={handleSave} />
     </div>
   );
 }

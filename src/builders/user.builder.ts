@@ -20,9 +20,7 @@ export const buildPayload = (
     configuration.jobFailureTriggerRecipient = form.jobFailureTriggerRecipient;
   }
 
-  if (form.cronOption) {
-    configuration.cronOption = form.cronOption;
-  }
+  configuration.cronOption = form.cronOption ?? "EOD";
 
   if (Object.keys(configuration).length) {
     payload.configuration = configuration;
@@ -41,6 +39,7 @@ export const buildSheetPayload = (
     durationIndex,
     statusIndex,
     dateIndex,
+    projectIndex,
   } = form;
   const { updatedAt, ...restUser } = user;
   const payload: Record<string, any> = { ...restUser };
@@ -58,9 +57,12 @@ export const buildSheetPayload = (
         taskNameIndex: !Number.isNaN(taskNameIndex)
           ? Number(taskNameIndex)
           : null,
-        durationIndex: Number.isFinite(durationIndex) ? durationIndex : null,
-        statusIndex: Number.isFinite(statusIndex) ? statusIndex : null,
-        dateIndex: Number.isFinite(dateIndex) ? dateIndex : null,
+        durationIndex: !Number.isNaN(durationIndex)
+          ? Number(durationIndex)
+          : null,
+        statusIndex: !Number.isNaN(statusIndex) ? Number(statusIndex) : null,
+        dateIndex: !Number.isNaN(dateIndex) ? Number(dateIndex) : null,
+        projectIndex: !Number.isNaN(projectIndex) ? Number(projectIndex) : null,
       },
     },
   };

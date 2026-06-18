@@ -31,15 +31,40 @@ export function ProfileTab() {
     });
   }, [user]);
 
-  const triggerOnSave = async () => {
-    setLoading(true);
-    const payload = buildPayload(form, user ?? {});
-    const res = await templateService.updateCurrentUser(payload);
-    if (res?.success) {
-      setUser(res?.data);
-      // TODO
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const validateForm = () => {
+    if (form.name && !form.name.trim()) {
+      throw new Error("Name is required.");
     }
-    setLoading(false);
+
+    if (form.eodMailRecipient && !isValidEmail(form.eodMailRecipient)) {
+      throw new Error("Please enter a valid EOD mail recipient email.");
+    }
+
+    if (
+      form.jobFailureTriggerRecipient &&
+      !isValidEmail(form.jobFailureTriggerRecipient)
+    ) {
+      throw new Error("Please enter a valid job failure recipient email.");
+    }
+  };
+  const triggerOnSave = async () => {
+    try {
+      setLoading(true);
+      validateForm();
+      const payload = buildPayload(form, user ?? {});
+      const res = await templateService.updateCurrentUser(payload);
+      if (res?.success) {
+        setUser(res?.data);
+        // TODO
+      }
+    } catch (e: any) {
+      console.error(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div>

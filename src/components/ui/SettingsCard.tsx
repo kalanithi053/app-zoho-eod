@@ -87,21 +87,30 @@ export function TextInput({
 
 export function Select({
   options,
-  value,
+  value = "",
   onChange,
+  placeholder = "Select an option",
 }: {
-  options: { value: string; label: string }[];
-  value?: string;
+  options: { value: string | number; label: string }[];
+  value?: string | number;
+  placeholder?: string;
   onChange?: (value: string) => void;
 }) {
+  const selected =
+    options.find((option) => option.value === value)?.value ?? "";
+
   return (
     <select
-      value={value}
+      value={selected}
       onChange={(e) => onChange?.(e.target.value)}
       className="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 focus:outline-none focus:border-brand-400 transition-colors cursor-pointer"
     >
+      <option value="" disabled>
+        {placeholder}
+      </option>
+
       {options.map((option) => (
-        <option key={option.value} value={option.value}>
+        <option key={option.value} value={option.value.toString()}>
           {option.label}
         </option>
       ))}
@@ -115,7 +124,7 @@ export function SaveButton({
   loading = false,
 }: {
   onClick?: () => void;
-  label?: string;
+  label?: string | React.ReactNode;
   loading?: boolean;
 }) {
   return (
