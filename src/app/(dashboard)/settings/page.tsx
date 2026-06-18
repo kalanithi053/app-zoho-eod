@@ -3,6 +3,7 @@ import { OAuthTab } from "@/components/settings/OauthTab";
 import { ProfileTab } from "@/components/settings/ProfileTab";
 import { ProjectsTab } from "@/components/settings/ProjectsTab";
 import { SheetTab } from "@/components/settings/SheetTab";
+import { useUserStore } from "@/store/useAuthStore";
 import clsx from "clsx";
 import { Folders, KeyRound, Table2, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,7 +19,7 @@ export default function SettingsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const activeTab = searchParams.get("tab") ?? "oauth";
-
+const {user}=useUserStore()
   const setTab = (tab: string) => {
     router.push(`/settings?tab=${tab}`, { scroll: false });
   };
@@ -41,6 +42,7 @@ export default function SettingsPage() {
               <button
                 key={id}
                 onClick={() => setTab(id)}
+                disabled={id=== "sheet" && user?.configuration?.cronOption === "EOD"}
                 className={clsx(
                   "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-all duration-150",
                   activeTab === id
@@ -48,6 +50,9 @@ export default function SettingsPage() {
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100",
                 )}
               >
+                {
+                  // TODO Diable style
+                }
                 <Icon className="w-3.5 h-3.5 flex-shrink-0" />
                 {label}
               </button>

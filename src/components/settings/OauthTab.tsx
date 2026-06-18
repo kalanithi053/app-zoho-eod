@@ -17,7 +17,7 @@ export function OAuthTab() {
   const revokeZohoOAuth = async () => {
     const res = await templateService.revokeZohoOAuth();
     setUser(res.data);
-    // TODO
+    // TODO:
   };
   // TODO tab=oauth&status=success&Module=zoho check on the search param and trigger toast for oauth success for zoho
   return (
