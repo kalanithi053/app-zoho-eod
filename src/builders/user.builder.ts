@@ -7,14 +7,13 @@ export const buildPayload = (
   const { updatedAt, ...restUser } = user;
   const payload: Record<string, any> = { ...restUser };
   const configuration: Record<string, any> = { ...restUser.configuration };
-
+  const recipient = configuration?.recipient ?? {};
   if (form.name) {
     payload.name = form.name;
   }
-
-  if (form.eodMailRecipient) {
-    configuration.eodMailRecipient = form.eodMailRecipient;
-  }
+  recipient.eodMailTo = form.eodMailTo ?? [];
+  recipient.eodMailCc = form.eodMailCc ?? [];
+  recipient.eodMailBcc = form.eodMailBcc ?? [];
 
   if (form.jobFailureTriggerRecipient) {
     configuration.jobFailureTriggerRecipient = form.jobFailureTriggerRecipient;
@@ -23,12 +22,13 @@ export const buildPayload = (
   configuration.cronOption = form.cronOption ?? "EOD";
 
   if (Object.keys(configuration).length) {
-    payload.configuration = configuration;
+    payload.configuration = { ...configuration, recipient };
   }
-  payload.configuration.triggerCron = form.triggerCron;
+  payload.configuration.triggerCron = !!form.triggerCron;
 
   return payload;
 };
+``;
 
 export const buildSheetPayload = (
   form: Record<string, any>,

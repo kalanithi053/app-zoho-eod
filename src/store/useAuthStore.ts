@@ -32,6 +32,8 @@ export interface Configuration {
   jobFailureTriggerRecipient: string | null;
   portal: { id: string | number; name: string };
   defaultProject: { id: string | number; name: string };
+  recipient: { eodMailTo: string[]; eodMailCc: string[]; eodMailBcc: string[] };
+  triggerCron: boolean;
 }
 
 interface UserState {

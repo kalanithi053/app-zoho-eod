@@ -41,7 +41,7 @@ export function ProjectsTab() {
   const [search, setSearch] = useState<string>("");
   const [portalKey, setPortalKey] = useState<string>("");
   const [savedPayload, setSavedPayload] = useState<SavedPayload | null>(null);
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
 
   const handleSync = async () => {
     setSyncing(true);
@@ -49,6 +49,16 @@ export function ProjectsTab() {
     try {
       const res = await templateService.getProjects();
       if (res?.success) {
+        if (!user?.configuration?.projects?.length)
+          try {
+            const response = await templateService.getProfileDetials();
+
+            if (response?.success) {
+              setUser(response.data);
+            }
+          } catch (error) {
+            console.error("Failed to load profile:", error);
+          }
         const projects = res?.data
           ?.filter((project: any) => project.project_type === "active")
           ?.map((project: any) => {
@@ -96,7 +106,10 @@ export function ProjectsTab() {
             id: portalKey,
             name: enabled.find((p) => p.value === portalKey)?.label,
           }
-        : null,
+        : {
+            id: enabled[0]?.value,
+            name: enabled[0]?.label,
+          },
       projects: enabled.map((p) => ({
         id: p.value,
         name: p.label,
@@ -108,6 +121,7 @@ export function ProjectsTab() {
       const res = await templateService.updateZohoProjects(payload);
       if (res?.success) {
         // TODO
+        setUser(res?.data);
         console.log(res);
       }
     } catch (error: any) {
@@ -116,10 +130,6 @@ export function ProjectsTab() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePortalChange = (value: string): void => {
-    setPortalKey(value);
   };
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -138,8 +148,6 @@ export function ProjectsTab() {
   useEffect(() => {
     if (user?.configuration?.defaultProject?.id) {
       setPortalKey(user.configuration.defaultProject.id.toString());
-    } else {
-      setPortalKey("");
     }
 
     if (user?.configuration?.projects?.length) {
@@ -156,6 +164,7 @@ export function ProjectsTab() {
       );
     }
   }, [user]);
+
   return (
     <>
       <SettingsCard title="Zoho project mappings">
