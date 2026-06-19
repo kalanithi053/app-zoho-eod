@@ -2,7 +2,7 @@
 
 import Cookies from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 const logs = [
   "INITIALIZING_HANDSHAKE...",
@@ -10,7 +10,7 @@ const logs = [
   "ENCRYPTING_SESSION_KEYS...",
 ];
 
-export function SecureGateway() {
+function SecureGateway() {
   const [visibleLogs, setVisibleLogs] = useState<number[]>([]);
 
   useEffect(() => {
@@ -26,7 +26,6 @@ export function SecureGateway() {
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-zinc-950 text-gray-200">
-      {/* Main */}
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-5">
         <div className="max-w-sm space-y-4 text-center">
           <h1 className="text-xl font-semibold uppercase tracking-wider text-[#ebffe2] md:text-2xl">
@@ -39,7 +38,6 @@ export function SecureGateway() {
           </p>
         </div>
 
-        {/* Logs */}
         <div className="mt-10 flex w-full max-w-[240px] flex-col items-start gap-2 font-mono text-xs text-brand-400">
           {logs.map((log, index) => (
             <div
@@ -59,7 +57,8 @@ export function SecureGateway() {
     </div>
   );
 }
-export default function Connect() {
+
+function ConnectHandler() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -69,7 +68,7 @@ export default function Connect() {
 
     if (token) {
       Cookies.set("access_token", token, {
-        expires: 1, // 1 day
+        expires: 1,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
@@ -80,9 +79,13 @@ export default function Connect() {
     }
   }, [searchParams, router]);
 
+  return <SecureGateway />;
+}
+
+export default function Connect() {
   return (
-    <div>
-      <SecureGateway />
-    </div>
+    <Suspense fallback={<SecureGateway />}>
+      <ConnectHandler />
+    </Suspense>
   );
 }

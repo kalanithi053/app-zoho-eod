@@ -7,7 +7,7 @@ import { useUserStore } from "@/store/useAuthStore";
 import clsx from "clsx";
 import { Folders, KeyRound, Table2, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
 const TABS = [
   { id: "oauth", label: "OAuth", icon: KeyRound },
@@ -16,7 +16,7 @@ const TABS = [
   { id: "profile", label: "Profile", icon: User },
 ];
 
-export default function SettingsPage() {
+function SettingsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const activeTab = searchParams.get("tab") ?? "oauth";
@@ -78,5 +78,13 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SettingsContent />
+    </Suspense>
   );
 }
